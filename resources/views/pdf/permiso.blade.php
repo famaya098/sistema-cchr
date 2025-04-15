@@ -5,256 +5,339 @@
     <title>Solicitud de Permiso</title>
     <style>
         @page {
-            margin: 1.5cm 2cm;
+            margin: 25px;
             padding: 0;
         }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica', Arial, sans-serif;
             font-size: 12px;
-            line-height: 1.5;
+            line-height: 1.4;
             margin: 0;
             padding: 0;
-            color: #000;
+            color: #333;
             background-color: #fff;
         }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 15px;
-            padding: 10px;
+        .page-container {
             position: relative;
-            height: 90px;
+            width: 100%;
+            padding: 0;
         }
-        .header img {
-            max-height: 80px;
-            width: auto;
-            display: block;
-            margin: 0 auto;
-        }
-        .title-container {
+        /* Header con logo y título */
+        .header {
+            display: flex;
             margin-bottom: 20px;
         }
-        .title {
+        .logo-container {
+            width: 110px;
+            padding-right: 10px;
+        }
+        .logo {
+            width: 100%;
+            height: auto;
+        }
+        .title-container {
+            flex: 1;
             text-align: center;
+        }
+        .title {
             font-size: 16px;
             font-weight: bold;
-            margin: 0 0 10px 0;
-            border: 1px solid #000;
-            padding: 8px;
-            background-color: #f5f5f5;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            color: #2c3e50;
+            margin: 15px 0 5px 0;
         }
         .subtitle {
-            text-align: center;
             font-size: 14px;
+            color: #376e37;
+            font-weight: bold;
             margin: 0;
-            border: 1px solid #000;
-            padding: 6px;
-            background-color: #f9f9f9;
         }
-        .main-content {
-            margin-bottom: 30px;
+        /* Secciones con estilo de tarjeta */
+        .info-card {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        table {
+        .card-header {
+            background-color: #376e37;
+            color: white;
+            padding: 5px 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 8px;
+        }
+        /* Tabla de información */
+        .info-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 0;
+        }
+        .info-table tr td {
+            padding: 5px 8px;
+            vertical-align: top;
+        }
+        .info-table tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+        .label {
+            font-weight: bold;
+            color: #2c3e50;
+            width: 22%;
+        }
+        .value {
+            width: 28%;
+        }
+        /* Tabla para la forma de reposición */
+        .reposition-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
-            page-break-inside: avoid;
+            margin: 0;
         }
-        table, th, td {
-            border: 1px solid #000;
-        }
-        th {
-            background-color: #e6e6e6;
-            font-weight: bold;
+        .reposition-table th, .reposition-table td {
+            border: 1px solid #ddd;
+            padding: 6px;
             text-align: center;
-            padding: 8px;
             font-size: 11px;
         }
-        td {
-            padding: 8px;
-            text-align: left;
-            font-size: 12px;
+        .reposition-table th {
+            background-color: #376e37;
+            color: white;
+            font-size: 10px;
+            font-weight: normal;
         }
-        td.centered {
+        .reposition-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        /* Checkbox personalizado */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .checkbox {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 1px solid #333;
             text-align: center;
-        }
-        .section-title {
+            line-height: 14px;
             font-weight: bold;
-            text-align: center;
-            margin: 25px 0 15px 0;
-            padding: 5px 0;
-            border-bottom: 2px solid #000;
-            font-size: 14px;
+            margin-right: 6px;
         }
+        /* Sección de firmas */
         .signature-section {
-            margin-top: 80px;
+            margin-top: 40px; /* Aumentado para dar más espacio */
             width: 100%;
-            display: block;
-            position: relative;
-            page-break-inside: avoid;
-            clear: both;
+            display: table;
         }
         .signature-row {
-            width: 100%;
-            display: block;
-            height: 70px;
+            display: table-row;
         }
         .signature-col {
-            width: 31%;
-            float: left;
-            margin: 0 1%;
+            display: table-cell;
+            width: 33.33%;
             text-align: center;
+            padding: 0 8px;
         }
         .signature-line {
-            width: 90%;
-            margin: 0 auto 5px auto;
-            border-top: 1px solid #000;
+            border-top: 1px solid #333;
+            margin: 20px auto 5px auto;
+            width: 80%;
         }
-        .signature-f {
-            margin: 3px 0;
+        .signature-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 11px;
         }
         .signature-title {
             font-size: 10px;
-            margin-top: 3px;
+            color: #555;
         }
-        .text-bold {
-            font-weight: bold;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .clearfix:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        .page-break {
-            page-break-before: always;
-        }
-        .bg-gray {
-            background-color: #f5f5f5;
-        }
-        .align-top {
-            vertical-align: top;
+        /* Elementos decorativos y optimización de espacio */
+        .motivo-cell {
+            min-height: 40px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <img src="{{ public_path('images/BCR.png') }}" alt="Banco Central de Reserva de El Salvador">
-        </div>
-        
-        <div class="title-container">
-            <div class="title">Solicitud de Permiso y Control de Reposición</div>
-            <div class="subtitle">Censo Agropecuario y Pesca 2025</div>
-        </div>
-        
-        <div class="main-content">
-            <table>
-                <tr>
-                    <td width="15%" class="text-bold bg-gray">DUI:</td>
-                    <td width="35%">{{ $dui }}</td>
-                    <td width="15%" class="text-bold bg-gray">Fecha:</td>
-                    <td width="35%">{{ $fecha }}</td>
-                </tr>
-                <tr>
-                    <td class="text-bold bg-gray">Nombre</td>
-                    <td colspan="3">{{ strtoupper($nombre) }}</td>
-                </tr>
-                <tr>
-                    <td class="text-bold bg-gray">Fecha del Permiso</td>
-                    <td>{{ $fechaPermiso }}</td>
-                    <td class="text-bold bg-gray">Tiempo Solicitado</td>
-                    <td>{{ $tiempoSolicitado }}</td>
-                </tr>
-                <tr>
-                    <td class="text-bold bg-gray">Desde:</td>
-                    <td colspan="3">{{ $horaInicio }} a {{ $horaFin }}</td>
-                </tr>
-                <tr>
-                    <td class="text-bold bg-gray align-top" rowspan="2">Motivo</td>
-                    <td class="align-top" rowspan="2">{{ $motivo }}</td>
-                    <td class="text-bold bg-gray text-center">Con descuento</td>
-                    <td class="text-bold bg-gray text-center">Sin descuento</td>
-                </tr>
-                <tr>
-                    <td class="text-center" style="font-size: 14px; font-weight: bold;">{{ $conDescuento ? 'X' : '' }}</td>
-                    <td class="text-center" style="font-size: 14px; font-weight: bold;">{{ !$conDescuento ? 'X' : '' }}</td>
-                </tr>
-                <tr>
-                    <td class="text-bold bg-gray">Sede:</td>
-                    <td>{{ $sede }}</td>
-                    <td class="text-bold bg-gray">Cargo:</td>
-                    <td>{{ $cargo }}</td>
-                </tr>
-            </table>
+    <div class="page-container">
+        <div class="content-container">
+            <!-- Encabezado con logo a la izquierda y título a la derecha -->
+            <div class="header">
+                <div class="logo-container">
+                    <img src="{{ public_path('images/BCR.png') }}" alt="Banco Central de Reserva" class="logo">
+                </div>
+                <div class="title-container">
+                    <h1 class="title">SOLICITUD DE PERMISO Y CONTROL DE REPOSICIÓN</h1>
+                    <h2 class="subtitle">Censo Agropecuario y Pesca 2025</h2>
+                </div>
+            </div>
             
-            <div class="section-title">Forma de Reposición</div>
+            <!-- Información personal -->
+            <div class="info-card">
+                <div class="card-header">INFORMACIÓN PERSONAL</div>
+                <div class="card-body">
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">DUI:</td>
+                            <td class="value">{{ $dui }}</td>
+                            <td class="label">Fecha de solicitud:</td>
+                            <td class="value">{{ $fecha }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Nombre completo:</td>
+                            <td class="value" colspan="3">{{ strtoupper($nombre) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Sede:</td>
+                            <td class="value">{{ $sede }}</td>
+                            <td class="label">Cargo:</td>
+                            <td class="value">{{ $cargo }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
             
-            <table>
-                <thead>
-                    <tr>
-                        <th colspan="2" class="text-center">Desde</th>
-                        <th colspan="2" class="text-center">Hasta</th>
-                        <th rowspan="2" class="text-center">Total de Minutos</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center">Día</th>
-                        <th class="text-center">Hora</th>
-                        <th class="text-center">Día</th>
-                        <th class="text-center">Hora</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($diasReposicion as $dia)
-                    <tr>
-                        <td class="text-center">{{ isset($dia['fecha']) ? date('d/m/Y', strtotime($dia['fecha'])) : '' }}</td>
-                        <td class="text-center">{{ $dia['horaInicio'] ?? '' }}</td>
-                        <td class="text-center">{{ isset($dia['fecha']) ? date('d/m/Y', strtotime($dia['fecha'])) : '' }}</td>
-                        <td class="text-center">{{ $dia['horaFin'] ?? '' }}</td>
-                        <td class="text-center">
-                            @php
-                                $minutos = 0;
-                                if(isset($dia['horaInicio']) && isset($dia['horaFin'])) {
-                                    $inicio = strtotime($dia['horaInicio']);
-                                    $fin = strtotime($dia['horaFin']);
-                                    if($inicio && $fin) {
-                                        $diff = $fin - $inicio;
-                                        if($diff < 0) $diff += 86400;
-                                        $minutos = $diff / 60;
+            <!-- Información del permiso -->
+            <div class="info-card">
+                <div class="card-header">DETALLES DEL PERMISO</div>
+                <div class="card-body">
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">Fecha del permiso:</td>
+                            <td class="value">{{ $fechaPermiso }}</td>
+                            <td class="label">Tiempo solicitado:</td>
+                            <td class="value">{{ $tiempoSolicitado }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Horario:</td>
+                            <td class="value" colspan="3">{{ $horaInicio }} a {{ $horaFin }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Motivo:</td>
+                            <td class="value motivo-cell" colspan="3">{{ $motivo }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Tipo de permiso:</td>
+                            <td class="value">
+                                <div class="checkbox-container">
+                                    <div class="checkbox">{{ $conDescuento ? 'X' : '' }}</div> Con descuento
+                                </div>
+                            </td>
+                            <td class="value" colspan="2">
+                                <div class="checkbox-container">
+                                    <div class="checkbox">{{ !$conDescuento ? 'X' : '' }}</div> Sin descuento
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Forma de reposición -->
+            <div class="info-card">
+                <div class="card-header">FORMA DE REPOSICIÓN</div>
+                <div class="card-body">
+                    <table class="reposition-table">
+                        <thead>
+                            <tr>
+                                <th colspan="2">DESDE</th>
+                                <th colspan="2">HASTA</th>
+                                <th rowspan="2">TOTAL DE MINUTOS</th>
+                            </tr>
+                            <tr>
+                                <th>DÍA</th>
+                                <th>HORA</th>
+                                <th>DÍA</th>
+                                <th>HORA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php 
+                                // Verificar si hay datos válidos en diasReposicion
+                                $hayDatosValidos = false;
+                                
+                                foreach($diasReposicion as $dia) {
+                                    if(isset($dia['fecha']) && !empty($dia['fecha']) && 
+                                       strtotime($dia['fecha']) > strtotime('1971-01-01') && 
+                                       isset($dia['horaInicio']) && !empty($dia['horaInicio']) && 
+                                       isset($dia['horaFin']) && !empty($dia['horaFin'])) {
+                                        $hayDatosValidos = true;
+                                        break;
                                     }
                                 }
-                                echo round($minutos);
                             @endphp
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="signature-section">
-            <div class="signature-row clearfix">
-                <div class="signature-col">
-                    <div class="signature-line"></div>
-                    <div class="signature-f">F.</div>
-                    <div class="signature-title">Solicitante</div>
+                            
+                            @if($hayDatosValidos)
+                                @foreach($diasReposicion as $dia)
+                                    @php
+                                        // Solo procesar días con datos válidos
+                                        if(isset($dia['fecha']) && !empty($dia['fecha']) && 
+                                           strtotime($dia['fecha']) > strtotime('1971-01-01') && 
+                                           isset($dia['horaInicio']) && !empty($dia['horaInicio']) && 
+                                           isset($dia['horaFin']) && !empty($dia['horaFin'])) {
+                                            
+                                            $fechaFormateada = date('d/m/Y', strtotime($dia['fecha']));
+                                            
+                                            // Calcular minutos correctamente
+                                            $inicio = strtotime("1970-01-01 " . $dia['horaInicio']);
+                                            $fin = strtotime("1970-01-01 " . $dia['horaFin']);
+                                            
+                                            $diff = $fin - $inicio;
+                                            // Si fin es menor que inicio, asumimos que es al día siguiente
+                                            if($diff < 0) {
+                                                $diff += 86400; // Añadir 24 horas en segundos
+                                            }
+                                            
+                                            $minutos = round($diff / 60);
+                                    @endphp
+                                        <tr>
+                                            <td>{{ $fechaFormateada }}</td>
+                                            <td>{{ $dia['horaInicio'] }}</td>
+                                            <td>{{ $fechaFormateada }}</td>
+                                            <td>{{ $dia['horaFin'] }}</td>
+                                            <td>{{ $minutos }}</td>
+                                        </tr>
+                                    @php
+                                        }
+                                    @endphp
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>0</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
-                <div class="signature-col">
-                    <div class="signature-line"></div>
-                    <div class="signature-f">F.</div>
-                    <div class="signature-title">Revisado Especialista/Especialista Líder</div>
-                </div>
-                <div class="signature-col">
-                    <div class="signature-line"></div>
-                    <div class="signature-f">F.</div>
-                    <div class="signature-title">Responsable Delegado BCR</div>
+            </div>
+            
+            <!-- Sección de firmas -->
+            <div class="signature-section">
+                <div class="signature-row">
+                    <div class="signature-col">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">F.</div>
+                        <div class="signature-title">Solicitante</div>
+                    </div>
+                    <div class="signature-col">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">F.</div>
+                        <div class="signature-title">Revisado Especialista/Especialista Líder</div>
+                    </div>
+                    <div class="signature-col">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">F.</div>
+                        <div class="signature-title">Responsable Delegado BCR</div>
+                    </div>
                 </div>
             </div>
         </div>
