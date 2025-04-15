@@ -24,4 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Rutas para el formulario de permiso
+Route::get('/permiso', [App\Http\Controllers\PermisoController::class, 'index'])->name('permiso.index');
+Route::post('/permiso/generar-pdf', [App\Http\Controllers\PermisoController::class, 'generarPDF'])->name('permiso.pdf');
+
 require __DIR__.'/auth.php';

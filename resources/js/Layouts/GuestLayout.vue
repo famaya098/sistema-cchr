@@ -41,7 +41,7 @@ function toggleDarkMode() {
                 <a href="/">
                     <img class="items-center w-auto h-32 py-2 align-middle print:hidden" src="/images/logo.png"
                         alt="Banco Central de Reserva de El Salvador" />
-                    <img class="w-auto h-32 pr-2 m-4 hidden print:block" alt="ubicacion " src="/images/logodark.png" />
+                    <img class="w-auto h-32 pr-2 m-4 hidden print:block" alt="ubicacion " src="/images/BCR.png" />
                 </a>
 
             </div>
