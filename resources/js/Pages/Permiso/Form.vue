@@ -183,7 +183,7 @@ const submit = () => {
     const formData = new FormData();
     for (const key in form) {
         if (key === 'diasReposicion') {
-            formData.append(key, JSON.stringify(form[key]));
+            formData.append(key, JSON.stringify(diasReposicion.value));
         } else {
             formData.append(key, form[key]);
         }

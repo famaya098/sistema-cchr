@@ -50,14 +50,20 @@ class PermisoController extends Controller
 
             $data = $request->all();
             
-            // Manejo específico para conDescuento (convertirlo a booleano)
+            // Convertir conDescuento a booleano
             $conDescuento = filter_var($data['conDescuento'], FILTER_VALIDATE_BOOLEAN);
             
-            // Manejo específico para diasReposicion (convertir de JSON si es necesario)
+            // Manejar diasReposicion - asegurarse que sea un array
+            $diasReposicion = [];
             if (is_string($data['diasReposicion'])) {
                 $diasReposicion = json_decode($data['diasReposicion'], true);
             } else {
                 $diasReposicion = $data['diasReposicion'];
+            }
+            
+            // Asegurarse que diasReposicion sea un array válido
+            if (!is_array($diasReposicion)) {
+                $diasReposicion = [];
             }
             
             $pdf = PDF::loadView('pdf.permiso', [

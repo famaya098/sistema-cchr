@@ -25,11 +25,12 @@
         /* Header con logo y título */
         .header {
             display: flex;
+            align-items: center; /* Alinear verticalmente */
             margin-bottom: 20px;
         }
         .logo-container {
-            width: 110px;
-            padding-right: 10px;
+            width: 100px;
+            margin-right: 20px;
         }
         .logo {
             width: 100%;
@@ -43,7 +44,7 @@
             font-size: 16px;
             font-weight: bold;
             color: #2c3e50;
-            margin: 15px 0 5px 0;
+            margin: 0 0 5px 0;
         }
         .subtitle {
             font-size: 14px;
@@ -130,7 +131,7 @@
         }
         /* Sección de firmas */
         .signature-section {
-            margin-top: 40px; /* Aumentado para dar más espacio */
+            margin-top: 60px; /* Aumentado para dar más espacio */
             width: 100%;
             display: table;
         }
@@ -146,7 +147,7 @@
         .signature-line {
             border-top: 1px solid #333;
             margin: 20px auto 5px auto;
-            width: 80%;
+            width: 90%; /* Ampliado para dar más espacio */
         }
         .signature-name {
             font-weight: bold;
@@ -257,54 +258,50 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php 
-                                // Verificar si hay datos válidos en diasReposicion
-                                $hayDatosValidos = false;
-                                
-                                foreach($diasReposicion as $dia) {
-                                    if(isset($dia['fecha']) && !empty($dia['fecha']) && 
-                                       strtotime($dia['fecha']) > strtotime('1971-01-01') && 
-                                       isset($dia['horaInicio']) && !empty($dia['horaInicio']) && 
-                                       isset($dia['horaFin']) && !empty($dia['horaFin'])) {
-                                        $hayDatosValidos = true;
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            
-                            @if($hayDatosValidos)
+                            @if(is_array($diasReposicion) && count($diasReposicion) > 0)
                                 @foreach($diasReposicion as $dia)
                                     @php
-                                        // Solo procesar días con datos válidos
-                                        if(isset($dia['fecha']) && !empty($dia['fecha']) && 
-                                           strtotime($dia['fecha']) > strtotime('1971-01-01') && 
-                                           isset($dia['horaInicio']) && !empty($dia['horaInicio']) && 
-                                           isset($dia['horaFin']) && !empty($dia['horaFin'])) {
-                                            
-                                            $fechaFormateada = date('d/m/Y', strtotime($dia['fecha']));
-                                            
-                                            // Calcular minutos correctamente
-                                            $inicio = strtotime("1970-01-01 " . $dia['horaInicio']);
-                                            $fin = strtotime("1970-01-01 " . $dia['horaFin']);
-                                            
-                                            $diff = $fin - $inicio;
-                                            // Si fin es menor que inicio, asumimos que es al día siguiente
-                                            if($diff < 0) {
-                                                $diff += 86400; // Añadir 24 horas en segundos
+                                        if(!isset($dia['fecha']) || !isset($dia['horaInicio']) || !isset($dia['horaFin'])) {
+                                            continue;
+                                        }
+                                        
+                                        $fechaFormateada = '';
+                                        if(!empty($dia['fecha'])) {
+                                            try {
+                                                $fechaFormateada = date('d/m/Y', strtotime($dia['fecha']));
+                                            } catch(\Exception $e) {
+                                                $fechaFormateada = $dia['fecha'];
                                             }
-                                            
-                                            $minutos = round($diff / 60);
-                                    @endphp
-                                        <tr>
-                                            <td>{{ $fechaFormateada }}</td>
-                                            <td>{{ $dia['horaInicio'] }}</td>
-                                            <td>{{ $fechaFormateada }}</td>
-                                            <td>{{ $dia['horaFin'] }}</td>
-                                            <td>{{ $minutos }}</td>
-                                        </tr>
-                                    @php
+                                        }
+                                        
+                                        // Calcular minutos
+                                        $minutos = 0;
+                                        if(!empty($dia['horaInicio']) && !empty($dia['horaFin'])) {
+                                            try {
+                                                $inicio = strtotime("1970-01-01 " . $dia['horaInicio']);
+                                                $fin = strtotime("1970-01-01 " . $dia['horaFin']);
+                                                
+                                                if($inicio && $fin) {
+                                                    $diff = $fin - $inicio;
+                                                    // Si fin es menor que inicio, asumimos que es al día siguiente
+                                                    if($diff < 0) {
+                                                        $diff += 86400; // Añadir 24 horas en segundos
+                                                    }
+                                                    
+                                                    $minutos = round($diff / 60);
+                                                }
+                                            } catch(\Exception $e) {
+                                                $minutos = 0;
+                                            }
                                         }
                                     @endphp
+                                    <tr>
+                                        <td>{{ $fechaFormateada }}</td>
+                                        <td>{{ $dia['horaInicio'] ?? '' }}</td>
+                                        <td>{{ $fechaFormateada }}</td>
+                                        <td>{{ $dia['horaFin'] ?? '' }}</td>
+                                        <td>{{ $minutos }}</td>
+                                    </tr>
                                 @endforeach
                             @else
                                 <tr>
