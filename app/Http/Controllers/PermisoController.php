@@ -29,65 +29,77 @@ class PermisoController extends Controller
     }
 
     public function generarPDF(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'dui' => 'required|regex:/^\d{8}-\d{1}$/',
-                'nombre' => 'required|string',
-                'fechaPermiso' => 'required|date',
-                'horaInicio' => 'required',
-                'horaFin' => 'required',
-                'motivo' => 'required|string',
-                'conDescuento' => 'required',
-                'sede' => 'required|string',
-                'cargo' => 'required|string',
-                'diasReposicion' => 'required',
-            ]);
+{
+    try {
+        $validator = Validator::make($request->all(), [
+            'dui' => 'required|regex:/^\d{8}-\d{1}$/',
+            'nombre' => 'required|string',
+            'fechaPermiso' => 'required|date',
+            'horaInicio' => 'required',
+            'horaFin' => 'required',
+            'motivo' => 'required|string',
+            'conDescuento' => 'required',
+            'sede' => 'required|string',
+            'cargo' => 'required|string',
+            'diasReposicion' => 'required',
+            'previsualizar' => 'nullable'
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-
-            $data = $request->all();
-            
-            // Convertir conDescuento a booleano
-            $conDescuento = filter_var($data['conDescuento'], FILTER_VALIDATE_BOOLEAN);
-            
-            // Manejar diasReposicion - asegurarse que sea un array
-            $diasReposicion = [];
-            if (is_string($data['diasReposicion'])) {
-                $diasReposicion = json_decode($data['diasReposicion'], true);
-            } else {
-                $diasReposicion = $data['diasReposicion'];
-            }
-            
-            // Asegurarse que diasReposicion sea un array válido
-            if (!is_array($diasReposicion)) {
-                $diasReposicion = [];
-            }
-            
-            $pdf = PDF::loadView('pdf.permiso', [
-                'dui' => $data['dui'],
-                'nombre' => $data['nombre'],
-                'fecha' => now()->format('d/m/Y'),
-                'fechaPermiso' => date('d/m/Y', strtotime($data['fechaPermiso'])),
-                'horaInicio' => $data['horaInicio'],
-                'horaFin' => $data['horaFin'],
-                'tiempoSolicitado' => $this->calcularHoras($data['horaInicio'], $data['horaFin']) . ' horas',
-                'motivo' => $data['motivo'],
-                'conDescuento' => $conDescuento,
-                'sede' => $data['sede'],
-                'cargo' => $data['cargo'],
-                'diasReposicion' => $diasReposicion,
-            ]);
-
-            return $pdf->download('solicitud_permiso.pdf');
-        } catch (\Exception $e) {
-            // Registrar el error para debugging
-            Log::error('Error al generar PDF: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al generar el PDF: ' . $e->getMessage()], 500);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
+
+        $data = $request->all();
+        
+        // Convertir conDescuento a booleano
+        $conDescuento = filter_var($data['conDescuento'], FILTER_VALIDATE_BOOLEAN);
+        
+        // Manejar diasReposicion - asegurarse que sea un array
+        $diasReposicion = [];
+        if (is_string($data['diasReposicion'])) {
+            $diasReposicion = json_decode($data['diasReposicion'], true);
+        } else {
+            $diasReposicion = $data['diasReposicion'];
+        }
+        
+        // Asegurarse que diasReposicion sea un array válido
+        if (!is_array($diasReposicion)) {
+            $diasReposicion = [];
+        }
+        
+        $pdf = PDF::loadView('pdf.permiso', [
+            'dui' => $data['dui'],
+            'nombre' => $data['nombre'],
+            'fecha' => now()->format('d/m/Y'),
+            'fechaPermiso' => date('d/m/Y', strtotime($data['fechaPermiso'])),
+            'horaInicio' => $data['horaInicio'],
+            'horaFin' => $data['horaFin'],
+            'tiempoSolicitado' => $this->calcularHoras($data['horaInicio'], $data['horaFin']) . ' horas',
+            'motivo' => $data['motivo'],
+            'conDescuento' => $conDescuento,
+            'sede' => $data['sede'],
+            'cargo' => $data['cargo'],
+            'diasReposicion' => $diasReposicion,
+        ]);
+        
+        // Configurar codificación adecuada para el PDF
+        $pdf->setPaper('letter');
+        $pdf->setOption('encoding', 'UTF-8');
+        
+        // Verificar si es previsualización o descarga
+        $previsualizar = isset($data['previsualizar']) && $data['previsualizar'] === 'true';
+        
+        if ($previsualizar) {
+            return $pdf->stream('solicitud_permiso.pdf');
+        } else {
+            return $pdf->download('solicitud_permiso.pdf');
+        }
+    } catch (\Exception $e) {
+        // Registrar el error para debugging
+        Log::error('Error al generar PDF: ' . $e->getMessage());
+        return response()->json(['error' => 'Error al generar el PDF: ' . $e->getMessage()], 500);
     }
+}
 
     private function calcularHoras($inicio, $fin)
     {

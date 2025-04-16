@@ -112,48 +112,49 @@ const validarDui = (dui) => {
     return regex.test(dui);
 };
 
-const submit = () => {
+// Función para validar el formulario - reutilizable para previsualizar y descargar
+const validarFormulario = () => {
     // Validaciones básicas
     if (!validarDui(form.dui)) {
         error.value = 'El DUI debe tener el formato 00000000-0';
         setTimeout(() => { error.value = ''; }, 3000);
-        return;
+        return false;
     }
     
     if (!form.nombre) {
         error.value = 'Por favor ingrese su nombre';
         setTimeout(() => { error.value = ''; }, 3000);
-        return;
+        return false;
     }
     
     if (!form.fechaPermiso) {
         error.value = 'Por favor seleccione la fecha del permiso';
         setTimeout(() => { error.value = ''; }, 3000);
-        return;
+        return false;
     }
     
     if (!form.horaInicio || !form.horaFin) {
         error.value = 'Por favor seleccione la hora de inicio y fin';
         setTimeout(() => { error.value = ''; }, 3000);
-        return;
+        return false;
     }
     
     if (!form.motivo) {
         error.value = 'Por favor ingrese el motivo de la solicitud';
         setTimeout(() => { error.value = ''; }, 3000);
-        return;
+        return false;
     }
     
     if (!form.sede) {
         error.value = 'Por favor seleccione una sede';
         setTimeout(() => { error.value = ''; }, 3000);
-        return;
+        return false;
     }
     
     if (!form.cargo) {
         error.value = 'Por favor seleccione un cargo';
         setTimeout(() => { error.value = ''; }, 3000);
-        return;
+        return false;
     }
     
     let diasValidos = true;
@@ -166,20 +167,27 @@ const submit = () => {
     if (!diasValidos) {
         error.value = 'Por favor complete todos los campos de días de reposición';
         setTimeout(() => { error.value = ''; }, 3000);
-        return;
+        return false;
     }
     
     // Validar que el tiempo de reposición sea igual o mayor al tiempo solicitado
     if (tiempoTotalReposicion.value < tiempoSolicitadoEnHoras.value) {
         error.value = `El tiempo de reposición (${tiempoTotalReposicion.value.toFixed(1)} horas) debe ser igual o mayor al tiempo solicitado (${tiempoSolicitadoEnHoras.value.toFixed(1)} horas)`;
         setTimeout(() => { error.value = ''; }, 5000);
-        return;
+        return false;
     }
+    
+    return true;
+};
+
+// Función para previsualizar el PDF
+const previsualizar = () => {
+    if (!validarFormulario()) return;
     
     loading.value = true;
     error.value = '';
     
-    // Descargar PDF
+    // Preparar los datos
     const formData = new FormData();
     for (const key in form) {
         if (key === 'diasReposicion') {
@@ -188,6 +196,51 @@ const submit = () => {
             formData.append(key, form[key]);
         }
     }
+    
+    // Añadir la bandera de previsualización
+    formData.append('previsualizar', 'true');
+    
+    // Usar axios para abrir PDF en nueva ventana
+    axios.post(route('permiso.pdf'), formData, {
+        responseType: 'blob'
+    })
+    .then(response => {
+        loading.value = false;
+        
+        // Crear un objeto URL para el blob
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        
+        // Abrir el PDF en una nueva ventana/pestaña
+        window.open(url, '_blank');
+    })
+    .catch(error => {
+        loading.value = false;
+        console.error(error);
+        error.value = 'Ocurrió un error al generar el PDF. Por favor revise los datos ingresados.';
+        setTimeout(() => { error.value = ''; }, 5000);
+    });
+};
+
+// Función para descargar el PDF
+const descargar = () => {
+    if (!validarFormulario()) return;
+    
+    loading.value = true;
+    error.value = '';
+    
+    // Preparar los datos
+    const formData = new FormData();
+    for (const key in form) {
+        if (key === 'diasReposicion') {
+            formData.append(key, JSON.stringify(diasReposicion.value));
+        } else {
+            formData.append(key, form[key]);
+        }
+    }
+    
+    // Añadir la bandera de previsualización (false para descarga)
+    formData.append('previsualizar', 'false');
     
     // Usar axios directamente para descargar el PDF
     axios.post(route('permiso.pdf'), formData, {
@@ -211,6 +264,12 @@ const submit = () => {
         error.value = 'Ocurrió un error al generar el PDF. Por favor revise los datos ingresados.';
         setTimeout(() => { error.value = ''; }, 5000);
     });
+};
+
+// Función original submit (ahora llama a descargar)
+const submit = (e) => {
+    e?.preventDefault();
+    descargar();
 };
 </script>
 
@@ -479,7 +538,6 @@ const submit = () => {
                                                     </svg>
                                                 </div>
                                                 <textarea
-                                
                                                     id="motivo"
                                                     v-model="form.motivo"
                                                     rows="3"
@@ -612,26 +670,38 @@ const submit = () => {
                                     </p>
                                 </div>
                                 
-                                <!-- Botón de envío -->
-                                <div class="flex justify-center pt-4">
+                                <!-- Botones de acción -->
+                                <div class="flex justify-center gap-4 pt-4">
                                     <button 
-                                        type="submit" 
-                                        class="px-8 py-3 text-base font-medium text-white bg-[#363d4d] hover:bg-[#2c3340] rounded-lg transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#363d4d] disabled:opacity-50 dark:focus:ring-offset-gray-800 shadow-lg"
+                                        type="button"
+                                        @click="previsualizar"
+                                        class="px-8 py-3 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 dark:focus:ring-offset-gray-800 shadow-lg flex items-center"
                                         :disabled="loading"
                                     >
-                                        <span v-if="loading" class="flex items-center">
-                                            <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            Generando PDF...
-                                        </span>
-                                        <span v-else>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                            </svg>
-                                            Descargar Solicitud de Permiso
-                                        </span>
+                                        <svg v-if="loading" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        Vista previa
+                                    </button>
+                                    
+                                    <button 
+                                        type="submit" 
+                                        class="px-8 py-3 text-base font-medium text-white bg-[#363d4d] hover:bg-[#2c3340] rounded-lg transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#363d4d] disabled:opacity-50 dark:focus:ring-offset-gray-800 shadow-lg flex items-center"
+                                        :disabled="loading"
+                                    >
+                                        <svg v-if="loading" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                        Descargar Solicitud
                                     </button>
                                 </div>
                             </form>

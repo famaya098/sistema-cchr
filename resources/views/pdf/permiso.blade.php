@@ -2,8 +2,17 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Solicitud de Permiso</title>
     <style>
+
+        @font-face {    
+            font-family: 'Helvetica';
+            font-style: normal;
+            font-weight: normal;
+            src: local('Helvetica'), local('Helvetica-Regular');
+        }
+
         @page {
             margin: 25px;
             padding: 0;

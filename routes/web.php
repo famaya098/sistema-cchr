@@ -21,6 +21,6 @@ Route::middleware('auth')->group(function () {
 
 // Rutas para el formulario de permiso
 Route::get('/permiso', [App\Http\Controllers\PermisoController::class, 'index'])->name('permiso.index');
+//Route::post('/permiso/generar-pdf', [App\Http\Controllers\PermisoController::class, 'generarPDF'])->name('permiso.pdf');
 Route::post('/permiso/generar-pdf', [App\Http\Controllers\PermisoController::class, 'generarPDF'])->name('permiso.pdf');
-
 require __DIR__.'/auth.php';
